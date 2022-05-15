@@ -1,7 +1,7 @@
 use anyhow::{Context, Result};
 use clap::Parser;
 use std::fs::File;
-use std::io::{prelude::*, BufReader};
+use std::io::{prelude::*, BufReader, Write};
 use std::path::PathBuf;
 
 mod tests;
@@ -21,16 +21,16 @@ fn main() -> Result<()> {
     let file = File::open(args.path).with_context(|| format!("could not read file {:?}", path))?;
     let reader = BufReader::new(file);
 
-    pattern_match(&args.pattern, reader);
+    pattern_match(&args.pattern, reader, &mut std::io::stdout());
 
     Ok(())
 }
 
-fn pattern_match(pattern: &str, reader: BufReader<File>) {
+fn pattern_match(pattern: &str, reader: BufReader<File>, mut writer: impl Write) {
     for (index, line) in reader.lines().enumerate() {
         let line = line.unwrap();
         if line.contains(pattern) {
-            println!("{}. {}", index + 1, line);
+            writeln!(writer, "{}. {}", index + 1, line).unwrap();
         }
     }
 }
