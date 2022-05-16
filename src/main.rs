@@ -23,7 +23,7 @@ fn main() -> Result<()> {
     let file = File::open(args.path).with_context(|| format!("could not read file {:?}", path))?;
     let reader = BufReader::new(file);
 
-    pattern_match(&args.pattern, reader, &mut std::io::stdout());
+    pattern_match(&args.pattern, reader);
 
     Ok(())
 }
